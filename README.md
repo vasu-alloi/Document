@@ -1,4 +1,4 @@
-# Document 
+# Document for onprem deployment 
 ## install all dependencies
 ### Install cert-manager for SSL certificates
 ```
@@ -12,6 +12,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 kubectl wait --for=condition=available --timeout=300s deployment -n cert-manager --all
 ```
+this command showing time out 
 ```
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=ingress-nginx -n ingress-nginx --timeout=300s
 ```
+
