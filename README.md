@@ -73,6 +73,7 @@ cd alloi-public-charts
 helm dependency update ./alloi-stack
 
 # Create namespace for Alloi services
+```
 kubectl create namespace alloi
 ```
 ### Step 5: Configure DNS
