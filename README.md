@@ -39,6 +39,12 @@ EOF
 This will be used to issue certificates for your domain via cert-manager.
 ### Step 3: Set Up PostgreSQL Databases & Users
 #### Connect to your PostgreSQL instance (via psql, DBeaver, or pgAdmin) and run the following:
+If your PostgreSQL is running on a different host or port:
+```
+psql -h your_host -p your_port -U your_username -d your_database
+```
+It will prompt for a password.Put your Database password 
+Then enter into your database and perform these actions by replace your DB's,Users and Passwords.
 ```
 -- Create databases
 CREATE DATABASE "alloi-embeddings";
@@ -70,3 +76,4 @@ helm dependency update ./alloi-stack
 # Create namespace for Alloi services
 kubectl create namespace alloi
 ```
+
