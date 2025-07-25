@@ -1,6 +1,6 @@
 # Document for onprem deployment 
 ### step1: install all dependencies
-### Install cert-manager for SSL certificates
+#### Install cert-manager for SSL certificates
 ```
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.12.0/cert-manager.yaml
 ```
