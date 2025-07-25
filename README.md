@@ -12,7 +12,6 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ```
 kubectl wait --for=condition=available --timeout=300s deployment -n cert-manager --all
 ```
-this command showing time out 
 ```
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=ingress-nginx -n ingress-nginx --timeout=300s
 ```
@@ -81,4 +80,106 @@ Get the external IP of your ingress controller:
 ```
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 ```
+<img width="1190" height="81" alt="image" src="https://github.com/user-attachments/assets/cd080ab7-3aa6-4e04-899b-a128e04c8106" />
+When deploying a Kubernetes application on your local machine (e.g., using docker-desktop,Minikube or Kind), and exposing it using a nip.io domain with HTTPS, your browser might show the following error:
+<img width="1560" height="680" alt="image" src="https://github.com/user-attachments/assets/2e183314-f812-4fd1-b5d3-bac4fa3a8f3f" />
+#### step:6 Edit values.yaml
+Edit the ./alloi-stack/values.yaml file with your environment-specific values:
+```
+global:
+  domain: yourdomain.com
+  hostname: alloi.yourdomain.com
+  storage_class: "gp2"
+  s3_bucket: your-s3-bucket-name
+  aws_region: us-west-2
+  database_host: your-rds-endpoint.region.rds.amazonaws.com
+  database_port: "5432"
 
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: alloi.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - alloi.yourdomain.com
+      secretName: alloi-tls
+
+```
+### Step 7: Edit values-secrets.yaml
+Create a values-secrets.yaml file to store sensitive values:
+```
+global:
+  backend:
+    secretVariables:
+      DATABASE_NAME: "alloi-backend"
+      DATABASE_USER: "backend_user"
+      DATABASE_PASSWORD: "secure_password_4"
+      DJANGO_SECRET_KEY: "your-50-character-secret-key"
+      CRYPTOGRAPHY_KEY: "your-32-byte-encryption-key"
+      OPENAI_API_KEY: "sk-your-openai-api-key"
+      AWS_ACCESS_KEY_ID: "your-aws-access-key"
+      AWS_SECRET_ACCESS_KEY: "your-aws-secret-key"
+      REDIS_PASSWORD: "redis-secure-password"
+      RABBITMQ_PASSWORD: "rabbitmq-secure-password"
+
+embeddings:
+  secretVariables:
+    DATABASE_NAME: "alloi-embeddings"
+    DATABASE_USER: "embeddings_user"
+    DATABASE_PASSWORD: "secure_password_1"
+    OPENAI_API_KEY: "sk-your-openai-api-key"
+
+supertokens:
+  database:
+    name: "alloi-supertokens"
+    host: "your-rds-endpoint.region.rds.amazonaws.com"
+    port: 5432
+    user: "supertokens_user"
+    password: "secure_password_3"
+
+rabbitmq:
+  auth:
+    username: "alloi-rabbitmq"
+    password: "rabbitmq-secure-password"
+    erlangCookie: "your-erlang-cookie"
+
+redis:
+  global:
+    redis:
+      password: "redis-secure-password"
+```
+Keep this file safe! Do not commit this to GitHub.
+### Step 8: Deploy Alloi Using Helm
+```
+helm install alloi ./alloi-stack -n alloi \
+  -f ./alloi-stack/values.yaml \
+  -f ./alloi-stack/values-secrets-template.yaml
+  ```
+This will deploy all the services in the Alloi stack to your Kubernetes cluster.
+### Step 9: Verify Deployment
+Check pods:
+```
+kubectl get pods -n alloi
+```
+Check services:
+```
+kubectl get svc -n alloi
+```
+Check certificate status:
+```
+kubectl describe certificate -n alloi
+```
+Access the domain:
+```
+https://alloi.yourdomain.com
+```
+Test access
+```
+curl -k https://alloi.yourdomain.com
+```
