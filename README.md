@@ -82,9 +82,12 @@ Get the external IP of your ingress controller:
 kubectl get svc -n ingress-nginx ingress-nginx-controller
 ```
 <img width="1190" height="81" alt="image" src="https://github.com/user-attachments/assets/cd080ab7-3aa6-4e04-899b-a128e04c8106" />
+
 When deploying a Kubernetes application on your local machine (e.g., using docker-desktop,Minikube or Kind), and exposing it using a nip.io domain with HTTPS, your browser might show the following error:
+
 <img width="1560" height="680" alt="image" src="https://github.com/user-attachments/assets/2e183314-f812-4fd1-b5d3-bac4fa3a8f3f" />
-#### step:6 Edit values.yaml
+
+### step:6 Edit values.yaml
 Edit the ./alloi-stack/values.yaml file with your environment-specific values:
 ```
 global:
